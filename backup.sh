@@ -8,13 +8,13 @@ fi
 # --------------------------------------------------
 # set variables:
 # --------------------------------------------------
-directoryname=berry/"Week_"`date +%V`
+directoryname=berry/`date +%Y-%V`
 fullbackuplabel="Full Backup of "`hostname`" on "`date '+%B %e, %Y'`
 fullbackupname=`date +%Y-%m-%d`"_full.tar.gz"
 fullbackuplogname=`date +%Y-%m-%d`"_full.log"
 incrementalbackuplabel="Incremental Backup of "`hostname`" on "`date '+%B %e, %Y'`
-incrementalbackupname=`date +%Y-%m-%d`"_incremental"`date +%H%M`".tar.gz"
-incrementalbackuplogname=`date +%Y-%m-%d`"_incremental"`date +%H%M`".log"
+incrementalbackupname=`date +%Y-%m-%d`"_incremental_"`date +%H%M`".tar.gz"
+incrementalbackuplogname=`date +%Y-%m-%d`"_incremental_"`date +%H%M`".log"
 
 # --------------------------------------------------
 # options
@@ -75,7 +75,7 @@ fullbackup()
 	gzip $backupdirectory/$directoryname/$fullbackuplogname
 	logmessage "Done. Created $backupdirectory/$directoryname/$fullbackupname"
 	logmessage "To view the log, type:"
-	logmessage " zcat $backupdirectory/$directoryname/$fullbackuplogname"
+	logmessage "zcat $backupdirectory/$directoryname/$fullbackuplogname"
 }
 
 incrementalbackup()
@@ -98,7 +98,7 @@ incrementalbackup()
 		gzip $backupdirectory/$directoryname/$incrementalbackuplogname
 		logmessage "Done. Created $backupdirectory/$directoryname/$incrementalbackupname"
 		logmessage "To view the log, type:"
-		logmessage " zcat $backupdirectory/$directoryname/$incrementalbackuplogname"
+		logmessage "zcat $backupdirectory/$directoryname/$incrementalbackuplogname"
 	fi
 }
 
@@ -124,7 +124,6 @@ if test -e "$backupdirectory"; then
 		incrementalbackup;
 	fi
 
-	logmessage "Trimming old backups"
 	logmessage "Backup Script Done"
 else
 	logmessage "ERROR: Backup dir $backupdirectory doesn not exist"
