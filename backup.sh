@@ -18,7 +18,6 @@ incrementalbackupname=`date +%Y-%m-%d`"_incremental"`date +%H%M`".tar.gz"
 incrementalbackuplogname=`date +%Y-%m-%d`"_incremental"`date +%H%M`".log"
 filesfrom=~/.whattobackup
 excludefrom=~/.whatnottobackup
-tar=/usr/bin/tar
 
 # --------------------------------------------------
 # functions:
@@ -44,7 +43,7 @@ fullbackup()
 	logmessage "Running tar..."
 	starttime="STARTTIME: "`date +%H:%M:%S`
 	logmessage "$starttime"
-	$tar --one-file-system --create  --label "$fullbackuplabel" --files-from $filesfrom --exclude-from $excludefrom --ignore-failed-read --absolute-names --verbose --gzip --file $backupdirectory/$directoryname/$fullbackupname > $backupdirectory/$directoryname/$fullbackuplogname 2>&1
+	tar --one-file-system --create  --label "$fullbackuplabel" --files-from $filesfrom --exclude-from $excludefrom --ignore-failed-read --absolute-names --verbose --gzip --file $backupdirectory/$directoryname/$fullbackupname > $backupdirectory/$directoryname/$fullbackuplogname 2>&1
 	logmessage "$stoptime"
 	stoptime="STOPTIME: "`date +%H:%M:%S`
 	gzip $backupdirectory/$directoryname/$fullbackuplogname
@@ -67,7 +66,7 @@ incrementalbackup()
 		logmessage "Running tar..."
 		starttime="STARTTIME: "`date +%H:%M:%S`
 		logmessage "$starttime"
-		$tar --one-file-system --create --label "$incrementalbackuplabel" --files-from $filesfrom --exclude-from $excludefrom --ignore-failed-read --after-date "$lastfullbackupdatevar" --absolute-names --verbose --gzip --file $backupdirectory/$directoryname/$incrementalbackupname > $backupdirectory/$directoryname/$incrementalbackuplogname 2>&1
+		tar --one-file-system --create --label "$incrementalbackuplabel" --files-from $filesfrom --exclude-from $excludefrom --ignore-failed-read --after-date "$lastfullbackupdatevar" --absolute-names --verbose --gzip --file $backupdirectory/$directoryname/$incrementalbackupname > $backupdirectory/$directoryname/$incrementalbackuplogname 2>&1
 		logmessage "$stoptime"
 		stoptime="STOPTIME: "`date +%H:%M:%S`
 		gzip $backupdirectory/$directoryname/$incrementalbackuplogname
@@ -76,6 +75,11 @@ incrementalbackup()
 		logmessage " zcat $backupdirectory/$directoryname/$incrementalbackuplogname"
 	fi
 }
+
+# --------------------------------------------------
+# Trap errors and cleanup after us
+# --------------------------------------------------
+trap "echo 'Interrupted...cleaning up'; exit 1" 1 2 15
 
 if test -e "$backupdirectory"; then
 	logmessage "Backup Script Running"
