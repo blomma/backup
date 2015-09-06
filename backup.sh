@@ -8,7 +8,6 @@ fi
 # --------------------------------------------------
 # set variables:
 # --------------------------------------------------
-backupdirectory=/smb/maja.local/Factory/backup
 directoryname=berry/"Week_"`date +%V`
 fullbackuplabel="Full Backup of "`hostname`" on "`date '+%B %e, %Y'`
 fullbackupname=`date +%Y-%m-%d`"_full.tar.gz"
@@ -16,8 +15,35 @@ fullbackuplogname=`date +%Y-%m-%d`"_full.log"
 incrementalbackuplabel="Incremental Backup of "`hostname`" on "`date '+%B %e, %Y'`
 incrementalbackupname=`date +%Y-%m-%d`"_incremental"`date +%H%M`".tar.gz"
 incrementalbackuplogname=`date +%Y-%m-%d`"_incremental"`date +%H%M`".log"
+
+# --------------------------------------------------
+# options
+# --------------------------------------------------
+backupdirectory=/smb/maja.local/Factory/backup
 filesfrom=~/.whattobackup
 excludefrom=~/.whatnottobackup
+
+while getopts ":b:f:e:" opt; do
+  	case $opt in
+    	b)
+			backupdirectory=$OPTARG
+      		;;
+		f)
+			filesfrom=$OPTARG
+			;;
+		e)
+			excludefrom=$OPTARG
+			;;
+    	\?)
+      		echo "Invalid option: -$OPTARG" >&2
+      		exit 1
+      		;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			exit 1
+			;;
+	esac
+done
 
 # --------------------------------------------------
 # functions:
