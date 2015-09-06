@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ $UID != 0 ]; then
 	logmessage "Backup script must be invoked by root"
@@ -67,7 +67,7 @@ incrementalbackup()
 		logmessage "Running tar..."
 		starttime="STARTTIME: "`date +%H:%M:%S`
 		logmessage "$starttime"
-		$tar --create --label "$incrementalbackuplabel" --files-from $filesfrom --exclude-from $excludefrom --ignore-failed-read --after-date "$lastfullbackupdatevar" --absolute-names --verbose --gzip --file $backupdirectory/$directoryname/$incrementalbackupname > $backupdirectory/$directoryname/$incrementalbackuplogname 2>&1
+		$tar --one-file-system --create --label "$incrementalbackuplabel" --files-from $filesfrom --exclude-from $excludefrom --ignore-failed-read --after-date "$lastfullbackupdatevar" --absolute-names --verbose --gzip --file $backupdirectory/$directoryname/$incrementalbackupname > $backupdirectory/$directoryname/$incrementalbackuplogname 2>&1
 		logmessage "$stoptime"
 		stoptime="STOPTIME: "`date +%H:%M:%S`
 		gzip $backupdirectory/$directoryname/$incrementalbackuplogname
@@ -78,8 +78,7 @@ incrementalbackup()
 }
 
 if test -e "$backupdirectory"; then
-	# now perform the backup.
-	logmessage "---------- Backup Script Running... ----------"
+	logmessage "Backup Script Running"
 
 	if test `date +%u` = "Monday" && test ! -e "$backupdirectory/$directoryname"; then
 		# if it is monday and you havent yet done a full backup, do so
@@ -93,9 +92,10 @@ if test -e "$backupdirectory"; then
 		# otherwise, do an incremental backup
 		logmessage "Performing Incremental Backup..."
 		incrementalbackup;
-	fi # end if statement
+	fi
 
-	logmessage "---------- Backup Script Done ----------"
+	logmessage "Trimming old backups"
+	logmessage "Backup Script Done"
 else
 	logmessage "ERROR: Backup dir $backupdirectory doesn not exist"
 	logmessage "ERROR: Program terminated"
